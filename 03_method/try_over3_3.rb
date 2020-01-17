@@ -1,3 +1,5 @@
+require "pry"
+
 TryOver3 = Module.new
 # Q1
 # 以下要件を満たすクラス TryOver3::A1 を作成してください。
@@ -6,6 +8,21 @@ TryOver3 = Module.new
 # - `test_` メソッドがこのクラスに実装されていなくても `test_` から始まるメッセージに応答することができる
 # - TryOver3::A1 には `test_` から始まるインスタンスメソッドが定義されていない
 
+module TryOver3
+  class A1
+    def run_test
+      nil
+    end
+
+    def method_missing(method, *args)
+      if method.to_s.start_with?("test_")
+        run_test
+      else
+        raise NoMethodError
+      end
+    end
+  end
+end
 
 # Q2
 # 以下要件を満たす TryOver3::A2Proxy クラスを作成してください。
@@ -15,6 +32,20 @@ class TryOver3::A2
   def initialize(name, value)
     instance_variable_set("@#{name}", value)
     self.class.attr_accessor name.to_sym unless respond_to? name.to_sym
+  end
+end
+
+class TryOver3::A2Proxy
+  def initialize(source)
+    @source = source
+  end
+
+  def respond_to_missing?(method, include_private)
+    @source.respond_to?(method) || super
+  end
+
+  def method_missing(method, *args)
+    @source.send(method, *args)
   end
 end
 
@@ -48,6 +79,22 @@ end
 # TryOver3::A4.runners = [:Hoge]
 # TryOver3::A4::Hoge.run
 # # => "run Hoge"
+
+module TryOver3
+  class A4
+    def self.runners=(args)
+      @runners = args
+    end
+
+    def self.const_missing(const_name)
+      if @runners.include?(const_name)
+        const_set(name, "run #{name}")
+      else
+        super
+      end
+    end
+  end
+end
 
 
 # Q5. チャレンジ問題！ 挑戦する方はテストの skip を外して挑戦してみてください。
