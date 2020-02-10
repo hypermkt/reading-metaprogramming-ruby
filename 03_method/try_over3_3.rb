@@ -1,5 +1,3 @@
-require "pry"
-
 TryOver3 = Module.new
 # Q1
 # 以下要件を満たすクラス TryOver3::A1 を作成してください。
