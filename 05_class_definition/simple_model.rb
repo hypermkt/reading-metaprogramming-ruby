@@ -14,5 +14,23 @@
 # 3. 履歴がある場合、すべての操作履歴を放棄し、値も初期状態に戻す `restore!` メソッドを作成する
 
 module SimpleModel
+  def initialize(hash)
+    @hash ||= hash
+  end
 
+  def self.included(mod)
+    mod.extend(ClassMethods)
+  end
+
+  module ClassMethods
+    def attr_accessor(*names)
+      attr_reader *names
+
+      names.each do |name|
+        define_method("#{name}=") do
+
+        end
+      end
+    end
+  end
 end
