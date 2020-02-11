@@ -86,9 +86,13 @@ module TryOver3
       @runners = args
     end
 
-    def self.const_missing(const_name)
-      if @runners.include?(const_name)
-        const_set(name, "run #{name}")
+    def self.const_missing(name)
+      if @runners.include?(name)
+        klass = Object.new
+        klass.define_singleton_method(:run) do
+          "run #{name.to_s}"
+        end
+        klass
       else
         super
       end
