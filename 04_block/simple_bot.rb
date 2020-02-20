@@ -1,42 +1,27 @@
-# 次の仕様を満たすモジュール SimpleMock を作成してください
+# 次の仕様を満たすSimpleBotクラスとDSLを作成してください
 #
-# SimpleMockは、次の2つの方法でモックオブジェクトを作成できます
-# 特に、2の方法では、他のオブジェクトにモック機能を付与します
-# この時、もとのオブジェクトの能力が失われてはいけません
-# また、これの方法で作成したオブジェクトを、以後モック化されたオブジェクトと呼びます
-# 1.
-# ```
-# SimpleMock.new
-# ```
+# # これは、作成するSimpleBotクラスの利用イメージです
+# class Bot < SimpleBot
+#   setting :name, 'bot'
+#   respond 'keyword' do
+#     "response #{settings.name}"
+#   end
+# end
 #
-# 2.
-# ```
-# obj = SomeClass.new
-# SimpleMock.mock(obj)
-# ```
+# Bot.new.ask('keyword') #=> 'respond bot'
 #
-# モック化したオブジェクトは、expectsメソッドに応答します
-# expectsメソッドには2つの引数があり、それぞれ応答を期待するメソッド名と、そのメソッドを呼び出したときの戻り値です
-# ```
-# obj = SimpleMock.new
-# obj.expects(:imitated_method, true)
-# obj.imitated_method #=> true
-# ```
-# モック化したオブジェクトは、expectsの第一引数に渡した名前のメソッド呼び出しに反応するようになります
-# そして、第2引数に渡したオブジェクトを返します
-#
-# モック化したオブジェクトは、watchメソッドとcalled_timesメソッドに応答します
-# これらのメソッドは、それぞれ1つの引数を受け取ります
-# watchメソッドに渡した名前のメソッドが呼び出されるたび、モック化したオブジェクトは内部でその回数を数えます
-# そしてその回数は、called_timesメソッドに同じ名前の引数が渡された時、その時点での回数を参照することができます
-# ```
-# obj = SimpleMock.new
-# obj.expects(:imitated_method, true)
-# obj.watch(:imitated_method)
-# obj.imitated_method
-# obj.imitated_method
-# obj.called_times(:imitated_method) #=> 2
-# ```
+# 1. SimpleBotクラスを継承したクラスは、クラスメソッドrespond, setting, settingsを持ちます
+#     1. settingsメソッドは、任意のオブジェクトを返します
+#     2. settingsメソッドは、後述するクラスメソッドsettingによって渡された第一引数と同名のメソッド呼び出しに応答します
+# 2. SimpleBotクラスのサブクラスのインスタンスは、インスタンスメソッドaskを持ちます
+#     1. askは、一つの引数をとります
+#     2. askに渡されたオブジェクトが、後述するrespondメソッドで設定したオブジェクトと一致する場合、インスタンスは任意の返り値を持ちます
+#     3. 2のケースに当てはまらない場合、askメソッドの戻り値はnilです
+# 3. クラスメソッドrespondは、keywordとブロックを引数に取ります
+#     1. respondメソッドの第1引数keywordと同じ文字列が、インスタンス変数askに渡された時、第2引数に渡したブロックが実行され、その結果が返されます
+# 4. クラスメソッドsettingは、引数を2つ取り、1つ目がキー名、2つ目が設定する値です
+#     1. settingメソッドに渡された値は、インスタンスメソッド `settings` から返されるオブジェクトに、メソッド名としてアクセスすることで取り出すことができます
+#     2. e.g. クラス内で `setting :name, 'bot'` と実行した場合は、respondメソッドに渡されるブロックのスコープ内で `settings.name` の戻り値は `bot` の文字列になります
 
 # refs: https://github.com/t-mori23/reading-metaprogramming-ruby/blob/kotae/04_block/simple_bot.rb
 class SimpleBot
