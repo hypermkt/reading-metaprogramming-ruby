@@ -37,36 +37,3 @@
 # obj.imitated_method
 # obj.called_times(:imitated_method) #=> 2
 # ```
-
-# refs: https://github.com/t-mori23/reading-metaprogramming-ruby/blob/kotae/04_block/simple_bot.rb
-class SimpleBot
-  # @@ では始まる変数はクラス変数。クラスの特異メソッド・インスタンスメソッドから参照できる。
-  @@responds = {}
-  @@settings = {}
-
-  def ask(keyword)
-    if @@responds.key?(keyword)
-      @@responds[keyword].call
-    else
-      nil
-    end
-  end
-
-  def self.respond(key, &block)
-    @@responds[key] = block
-  end
-
-  def self.setting(key, value)
-    @@settings[key] = value
-
-    define_singleton_method(:settings) do
-      obj = Object.new
-
-      @@settings.each do |keyword, val|
-        obj.define_singleton_method(keyword) { val }
-      end
-
-      obj
-    end
-  end
-end
